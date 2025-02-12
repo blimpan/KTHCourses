@@ -1,2 +1,2 @@
 # KTHCourses
-An interactive catalog of all courses at KTH. Test 9
+An interactive catalog of all courses at KTH. Test 10
