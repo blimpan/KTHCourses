@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function Page() {
   
   const [searchText, setSearchText] = useState('');
   const [courses, setCourses] = useState<any[]>([]);
+  const [toggledPeriods, setToggledPeriods] = useState<any[]>([]);
 
   async function fetchCourses() {
     const res = await fetch("/api/filter-courses", {
@@ -13,6 +14,7 @@ export default function Page() {
       headers: { "Content-Type": "application/json"},
       body: JSON.stringify({
         textSearch: searchText,
+        periods: toggledPeriods
       }),
     });
     const data = await res.json();
@@ -23,10 +25,9 @@ export default function Page() {
 
   useEffect(() => {
     if (searchText) {
-      console.log(searchText)
       fetchCourses();
     }
-  }, [searchText]);
+  }, [searchText, toggledPeriods]);
 
   let debounceTimeout: NodeJS.Timeout;
   function onTextSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -35,6 +36,18 @@ export default function Page() {
     debounceTimeout = setTimeout(() => {
       setSearchText(event.target.value);
     }, 300);
+  }
+
+
+  function onTogglePeriod(event: React.MouseEvent<HTMLButtonElement>) {
+    const period = event.currentTarget.value;
+    
+    if (toggledPeriods.includes(period)) {
+      setToggledPeriods(toggledPeriods.filter((p) => p !== period));
+    } else {
+      setToggledPeriods([...toggledPeriods, period]);
+    }
+
   }
 
   return (
@@ -46,12 +59,14 @@ export default function Page() {
         <div className='flex flex-col'> {/* Period start filter */}
           <p>Period</p>
           <div className='flex flex-row def-border'>
-            {[1, 2, 3, 4].map((number) => (
+            {['1', '2', '3', '4', 'S'].map((period) => (
               <button
-                key={number}
-                className='px-7 py-3 border-l border-gray-500 hover:bg-gray-300'
+                key={period}
+                value={period}
+                onClick={onTogglePeriod}
+                className={`px-7 py-3 border-l border-gray-500 hover:bg-gray-300 ${toggledPeriods.includes(period) ? 'bg-gray-300' : ''}`}
               >
-                <b>{number}</b>
+                <b>{period}</b>
               </button>
             ))}
           </div>
@@ -61,11 +76,18 @@ export default function Page() {
       <div className='flex flex-col debug h-screen w-full pt-4 space-y-4 p-3'> {/* Course list */}
         <p>Search results:</p>
         {courses.length > 0 ? (
+          <>
           <ul>
             {courses.map((course) => (
-              <li key={course.id}>{course.title}</li>
+              <li key={course.id}>{course.course_code + " " + course.name}</li>
             ))}
           </ul>
+          
+          <div className='flex flex-row w-full h-min'>
+            <p className='text-lg font-bold'>{courses[0].course_code}</p>
+          </div>
+
+          </>
         ) : (
           <p>No courses found</p>
         )}
