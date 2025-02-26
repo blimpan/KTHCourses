@@ -1,40 +1,106 @@
 "use client"
 
+import CourseCard from './components/CourseCard'
 import React, { useEffect, useState } from 'react'
 
 export default function Page() {
   
   const [searchText, setSearchText] = useState('');
   const [courses, setCourses] = useState<any[]>([]);
+  const [totalCourses, setTotalCourses] = useState<number>(0);
   const [toggledPeriods, setToggledPeriods] = useState<any[]>([]);
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [maxPageIndex, setMaxPageIndex] = useState<number>(100);
+  const [loadedPages, setLoadedPages] = useState<number[]>([]);
+  const [readyForFetch, setReadyForFetch] = useState<boolean>(false);
+
+  let debounceTimeout: NodeJS.Timeout;
 
   async function fetchCourses() {
+
+    // console.log(`Starting fetchCourses with loadedPages: ${loadedPages}, pageIndex: ${pageIndex}, toggledPeriods ${toggledPeriods}`);
+
+    if (maxPageIndex > 0 && pageIndex > maxPageIndex) {
+      console.log('Max page index reached');
+      return;
+    }
+
+    if (loadedPages.includes(pageIndex)) {
+      console.log(`Page ${pageIndex} already loaded`);
+      return;
+    }
+
     const res = await fetch("/api/filter-courses", {
       method: "POST",
       headers: { "Content-Type": "application/json"},
       body: JSON.stringify({
         textSearch: searchText,
-        periods: toggledPeriods
+        periods: toggledPeriods,
+        limit_count: 20,
+        page_index: pageIndex
       }),
     });
+
+    setLoadedPages((prevPages) => [...prevPages, pageIndex]);
+
     const data = await res.json();
-    setCourses(data);
-    console.log("API data in frontend looks like")
-    console.log(data)
+    setCourses((prevCourses) => [...prevCourses, ...data.courses]);
+    setTotalCourses(data.count);
+    setMaxPageIndex(data.maxPageIndex);
+
+    console.log(data.courses)
+    // console.log(data.count)
   }
 
   useEffect(() => {
     if (searchText) {
-      fetchCourses();
+      setPageIndex(1); // Reset page to 1
+      setLoadedPages([]); // Clear loaded pages
+      setTotalCourses(0); // Reset total count
+      setCourses([]); // Clear previous courses
+      setReadyForFetch(true); // Indicate that we should fetch courses after state updates
     }
   }, [searchText, toggledPeriods]);
 
-  let debounceTimeout: NodeJS.Timeout;
+  useEffect(() => {
+    if (readyForFetch) {
+      fetchCourses();
+      setReadyForFetch(false); // Reset the flag
+    }
+  }, [readyForFetch]);
+
+  useEffect(() => {
+    function handleScroll() {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+    
+      debounceTimeout = setTimeout(() => {
+        const scrollPosition = window.innerHeight + window.scrollY; // height of viewport + vertical scroll position
+        const threshold = document.documentElement.scrollHeight * 0.8;
+    
+        if (scrollPosition >= threshold) {
+          setPageIndex((prevIndex) => prevIndex + 1);
+          console.log('Page index increased');
+        }
+      }, 100);
+    }
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (pageIndex > 1) {
+      fetchCourses();
+    }
+  }, [pageIndex]);
+
   function onTextSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
 
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
-      setSearchText(event.target.value);
+      setSearchText(event.target.value.trim());
     }, 300);
   }
 
@@ -74,14 +140,21 @@ export default function Page() {
       </div>
 
       <div className='flex flex-col debug h-screen w-full pt-4 space-y-4 p-3'> {/* Course list */}
-        <p>Search results:</p>
+
+        {totalCourses > 0 && (
+          <p>Showing {courses.length} of {totalCourses} courses</p>
+        )}
+        
         {courses.length > 0 ? (
           <>
-          <ul>
+          
             {courses.map((course) => (
-              <li key={course.id}>{course.course_code + " " + course.name}</li>
+
+                <CourseCard key={course.id} 
+                title={course.course_code + " " + course.name}
+                />
+
             ))}
-          </ul>
           
           <div className='flex flex-row w-full h-min'>
             <p className='text-lg font-bold'>{courses[0].course_code}</p>
@@ -91,7 +164,9 @@ export default function Page() {
         ) : (
           <p>No courses found</p>
         )}
+
       </div>
+      
    </div>
   )
 }
