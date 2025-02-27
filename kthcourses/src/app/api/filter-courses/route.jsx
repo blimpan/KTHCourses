@@ -2,11 +2,12 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 
-export async function POST(request: Request) {
+export async function POST(request) {
     try {
         const body = await request.json(); // Parse JSON body
-        let { textSearch, periods, limit_count, page_index } = body;
-
+        let { limit_count, page_index } = body;
+        const { textSearch, periods } = body;
+        
         const cookieStore = cookies() // Remove await if cookies() is not a promise
         const supabase = createClient(cookieStore)
         
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
         }
 
         // Flatten the response by merging attributes of course_main into the course_title objects
-        const flattenedCourses = data.map(course => ({
+        const flattenedCourses = data.map((course) => ({
             ...course  // Spread the course attributes
         }));
 

@@ -11,7 +11,7 @@ export default function Page() {
   const [searchText, setSearchText] = useState('');
   const [courses, setCourses] = useState<any[]>([]);
   const [totalCourses, setTotalCourses] = useState<number>(0);
-  const [toggledPeriods, setToggledPeriods] = useState<any[]>([]);
+  const [toggledPeriods, setToggledPeriods] = useState<string[]>([]);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [maxPageIndex, setMaxPageIndex] = useState<number>(100);
   const [loadedPages, setLoadedPages] = useState<number[]>([]);
