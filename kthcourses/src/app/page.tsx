@@ -16,6 +16,7 @@ export default function Page() {
   const [maxPageIndex, setMaxPageIndex] = useState<number>(100);
   const [loadedPages, setLoadedPages] = useState<number[]>([]);
   const [readyForFetch, setReadyForFetch] = useState<boolean>(false);
+  const [showSearchPanel, setShowSearchPanel] = useState<boolean>(false);
 
   let debounceTimeout: NodeJS.Timeout;
 
@@ -134,13 +135,36 @@ export default function Page() {
   return (
    <div className='flex h-screen'>
 
-      <SearchPanel 
-        onTextSearchChange={onTextSearchChange}
-        onTogglePeriod={onTogglePeriod}
-        toggledPeriods={toggledPeriods}
-      />
+      <div className={`debug fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[110%]'}`}>
+        <SearchPanel
+          onTextSearchChange={onTextSearchChange}
+          onTogglePeriod={onTogglePeriod}
+          toggledPeriods={toggledPeriods}
+        />
+      </div>
 
-      <div className='ml-[17.3rem] flex flex-col h-full w-full pt-4 space-y-4 p-3'> {/* Course list */}
+      {!showSearchPanel ? (
+        <button
+          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 hover:bg-gray-200 transition"
+          onClick={() => {
+            setShowSearchPanel(true);
+          }}
+        >
+          🔍
+        </button>
+      ) : (
+        <button
+          className="md:hidden text-2xl pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 hover:bg-gray-200 transition"
+          onClick={() => {
+            setShowSearchPanel(false);
+          }}
+        >
+          x
+        </button>
+      )}
+
+      <div className='md:ml-[16rem] z-0 flex flex-col h-full w-full pt-4 space-y-4 p-4'
+            onClick={() => setShowSearchPanel(false)}> {/* Course list */}
 
         {totalCourses > 0 && (
           <p>Showing {courses.length} of {totalCourses} courses</p>
