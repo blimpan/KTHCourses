@@ -34,3 +34,17 @@ body {
 .placeholder-color::placeholder {
   color: gray;
 }
+
+@layer base {
+  .rich-text ul {
+    @apply list-disc pl-5;
+  }
+
+  .rich-text ol {
+    @apply list-decimal pl-5;
+  }
+
+  .rich-text li {
+    @apply ml-2;
+  }
+}

@@ -135,7 +135,7 @@ export default function Page() {
   return (
    <div className='flex h-screen'>
 
-      <div className={`debug fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[110%]'}`}>
+      <div className={`fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[110%]'}`}>
         <SearchPanel
           onTextSearchChange={onTextSearchChange}
           onTogglePeriod={onTogglePeriod}
@@ -176,7 +176,8 @@ export default function Page() {
             {courses.map((course) => (
 
                 <CourseCard key={course.id} 
-                title={course.course_code + " " + course.name}
+                code={course.course_code}
+                name={course.name}
                 description={course.content}
                 ects={course.ects_credits}
                 />
