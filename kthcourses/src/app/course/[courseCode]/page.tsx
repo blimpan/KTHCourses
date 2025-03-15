@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
+import LoadingGif from '@/app/components/LoadingGif'
 
 interface CourseDetails {
     content: string;
@@ -62,7 +63,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
     }
 
     if (isLoading) {
-        return <div>Loading...</div>; // Display loading message until data is fetched
+        return <LoadingGif />;
     }
 
     if (!courseDetails) {
@@ -71,7 +72,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
 
     if (!isLoading && courseDetails) {
         return (
-            <div className="flex flex-col space-y-3 bg-white p-3">
+            <div className="debug flex flex-col space-y-3 bg-white p-3 animate-card-fade-in">
                 <div className=""> {/* Header with course title and ECTS credits */}
                     <h1 className="text-xl font-semibold">
                         {courseDetails.course_code} {courseDetails.name}

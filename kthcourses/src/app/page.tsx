@@ -63,7 +63,7 @@ export default function Page() {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
       setSearchText(event.target.value.trim());
-    }, 200);
+    }, 300);
   }
 
 
@@ -133,7 +133,7 @@ export default function Page() {
 
 
   return (
-   <div className='flex h-screen'>
+   <div className='flex'>
 
       <div className={`fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[110%]'}`}>
         <SearchPanel
@@ -163,7 +163,7 @@ export default function Page() {
         </button>
       )}
 
-      <div className='md:ml-[16rem] z-0 flex flex-col h-full w-full pt-4 space-y-4 p-4'
+      <div className='md:ml-[16rem] z-0 flex flex-col w-full pt-4 space-y-4 p-4'
             onClick={() => setShowSearchPanel(false)}> {/* Course list */}
 
         {totalCourses > 0 && (
@@ -187,7 +187,12 @@ export default function Page() {
             
           </>
         ) : (
-          <p>No courses found</p>
+          <div className='flex justify-center mt-16'>
+            <div className='flex w-fit justify-center bg-white drop-shadow-md rounded-lg p-4 animate-card-fade-in'>
+            <p className='text-center'>No courses match the current search parameters. <br/>Tip: Try some other ones.</p>
+            </div>
+          </div>
+
         )}
 
       </div>
