@@ -133,7 +133,7 @@ export default function Page() {
 
 
   return (
-   <div className='flex'>
+   <div className='flex h-full w-full'>
 
       <div className={`fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[110%]'}`}>
         <SearchPanel
@@ -163,7 +163,7 @@ export default function Page() {
         </button>
       )}
 
-      <div className='md:ml-[16rem] z-0 flex flex-col w-full pt-4 space-y-4 p-4'
+      <div className='md:ml-[16rem] z-0 flex flex-col w-full h-full pt-4 space-y-4 p-4'
             onClick={() => setShowSearchPanel(false)}> {/* Course list */}
 
         {totalCourses > 0 && (

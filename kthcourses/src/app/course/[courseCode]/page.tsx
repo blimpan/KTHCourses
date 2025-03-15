@@ -72,7 +72,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
 
     if (!isLoading && courseDetails) {
         return (
-            <div className="debug flex flex-col space-y-3 bg-white p-3 animate-card-fade-in">
+            <div className="flex flex-col h-full space-y-3 bg-white p-3 animate-card-fade-in">
                 <div className=""> {/* Header with course title and ECTS credits */}
                     <h1 className="text-xl font-semibold">
                         {courseDetails.course_code} {courseDetails.name}
