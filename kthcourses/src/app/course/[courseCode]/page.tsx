@@ -66,8 +66,8 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
         return <LoadingGif />;
     }
 
-    if (!courseDetails) {
-        return <div>Course not found</div>; // Handle case where courseDetails is null or undefined
+    if (!isLoading && !courseDetails) { // Course not found
+        return <div>Course not found</div>;
     }
 
     if (!isLoading && courseDetails) {
@@ -79,7 +79,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                     </h1>
                     <div className="flex flex-row space-x-2">
                         <p className="">
-                            {courseDetails.ects_credits} ECTS • School: {courseDetails.school} • {courseDetails.edu_level}
+                            {courseDetails.ects_credits} ECTS • School: {courseDetails.school} • {courseDetails.edu_level}  • <a className="underline" target='_blank' href={`https://www.kth.se/student/kurser/kurs/${courseDetails.course_code}?l=en`}> Link to official page </a>
                         </p>
                     </div>
                 </div>
