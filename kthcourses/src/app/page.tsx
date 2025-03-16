@@ -73,7 +73,7 @@ export default function Page() {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
       setSearchText(event.target.value.trim());
-    }, 500);
+    }, 350);
   }
 
 
