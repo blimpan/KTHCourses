@@ -2,6 +2,7 @@
 
 import CourseCard from '@/app/components/CourseCard'
 import SearchPanel from '@/app/components/SearchPanel'
+import LoadingGif from '@/app/components/LoadingGif'
 import React, { useEffect, useState } from 'react'
 
 export default function Page() {
@@ -17,12 +18,17 @@ export default function Page() {
   const [loadedPages, setLoadedPages] = useState<number[]>([]);
   const [readyForFetch, setReadyForFetch] = useState<boolean>(false);
   const [showSearchPanel, setShowSearchPanel] = useState<boolean>(false);
+  const [searchBoxText, setSearchBoxText] = useState<string>('');
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
+  let persistData = {searchText: searchText, toggledPeriods: toggledPeriods};
   let debounceTimeout: NodeJS.Timeout;
 
   // DECLARED FUNCTIONS
 
   async function fetchCourses() {
+
+    setIsFetching(true);
 
     // console.log(`Starting fetchCourses with loadedPages: ${loadedPages}, pageIndex: ${pageIndex}, toggledPeriods ${toggledPeriods}`);
 
@@ -56,14 +62,18 @@ export default function Page() {
 
     console.log(data.courses)
     // console.log(data.count)
+
+    setIsFetching(false);
   }
 
   function onTextSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
 
+    setSearchBoxText(event.target.value);
+
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
       setSearchText(event.target.value.trim());
-    }, 300);
+    }, 500);
   }
 
 
@@ -71,16 +81,36 @@ export default function Page() {
     const period = event.currentTarget.value;
     
     if (toggledPeriods.includes(period)) {
-      setToggledPeriods(toggledPeriods.filter((p) => p !== period));
+      setToggledPeriods(toggledPeriods.filter((p) => p !== period)); // Remove period from toggledPeriods
     } else {
-      setToggledPeriods([...toggledPeriods, period]);
+      setToggledPeriods([...toggledPeriods, period]); // Add period to toggledPeriods
     }
 
   }
 
   // EFFECTS
 
+  useEffect(() => {
+    // console.log('Checking session storage');
+
+    const savedSearchText = sessionStorage.getItem('searchText');
+    const savedToggledPeriods = sessionStorage.getItem('toggledPeriods');
+      
+    if (savedSearchText) {
+      setSearchBoxText(savedSearchText.slice(1, -1));
+      setSearchText(savedSearchText.slice(1, -1));
+      // console.log('Search text loaded from session storage');
+    };
+    
+    if (savedToggledPeriods) {
+      setToggledPeriods(JSON.parse(savedToggledPeriods));
+      // console.log(`Toggled periods loaded from session storage: ${savedToggledPeriods}`);
+    };
+
+  }, []);
+
   useEffect(() => { // Fetch courses when search text changes or toggled periods change. Resets variables to ensure a fresh fetch can be made.
+
     if (searchText) {
       setPageIndex(1);
       setLoadedPages([]);
@@ -88,6 +118,7 @@ export default function Page() {
       setCourses([]);
       setReadyForFetch(true); // Indicate that we should fetch courses after state updates
     }
+    
   }, [searchText, toggledPeriods]);
 
   useEffect(() => { // Fetch courses when readyForFetch flag is set to true (makes sure vars such as page index are reset before entering fetchCourses)
@@ -140,6 +171,7 @@ export default function Page() {
           onTextSearchChange={onTextSearchChange}
           onTogglePeriod={onTogglePeriod}
           toggledPeriods={toggledPeriods}
+          searchBoxText={searchBoxText}
         />
       </div>
 
@@ -166,33 +198,41 @@ export default function Page() {
       <div className='md:ml-[16rem] z-0 flex flex-col w-full h-full pt-4 space-y-4 p-4'
             onClick={() => setShowSearchPanel(false)}> {/* Course list */}
 
+        {courses.length == 0 && isFetching && (
+          <LoadingGif />
+        )}
+
+        {courses.length == 0 && !isFetching && (
+
+          <div className='flex justify-center mt-16'>
+            <div className='flex w-fit justify-center bg-white drop-shadow-md rounded-lg p-4 animate-card-fade-in'>
+              <p className='text-center'>No courses match the current search parameters. <br/>Tip: Try some other ones.</p>
+            </div>
+          </div>
+
+        )}
+
         {totalCourses > 0 && (
           <p>Showing {courses.length} of {totalCourses} courses</p>
         )}
         
-        {courses.length > 0 ? (
+        {courses.length > 0 &&  (
           <>
           
             {courses.map((course) => (
 
-                <CourseCard key={course.id} 
+                <CourseCard key={course.id}
                 code={course.course_code}
                 name={course.name}
                 description={course.content}
                 ects={course.ects_credits}
                 searchPanelShowing={showSearchPanel}
+                persistData={persistData}
                 />
 
             ))}
             
           </>
-        ) : (
-          <div className='flex justify-center mt-16'>
-            <div className='flex w-fit justify-center bg-white drop-shadow-md rounded-lg p-4 animate-card-fade-in'>
-            <p className='text-center'>No courses match the current search parameters. <br/>Tip: Try some other ones.</p>
-            </div>
-          </div>
-
         )}
 
       </div>
