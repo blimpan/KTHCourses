@@ -21,7 +21,7 @@ export default function Page() {
   const [searchBoxText, setSearchBoxText] = useState<string>('');
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  let persistData = {searchText: searchText, toggledPeriods: toggledPeriods};
+  const persistData = {searchText: searchText, toggledPeriods: toggledPeriods};
   let debounceTimeout: NodeJS.Timeout;
 
   // DECLARED FUNCTIONS
