@@ -1,9 +1,52 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+
 export default function SearchPanel(params) {
 
-    const { onTextSearchChange, onTogglePeriod, toggledPeriods, searchBoxText } = params;
+  const { onTextSearchChange, onTogglePeriod, toggledPeriods, searchBoxText, setShowSearchPanel } = params;
+
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.changedTouches[0].screenX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.changedTouches[0].screenX);
+  };
+
+  const handleTouchEnd = () => {
+    console.log("Touch start: ", touchStartX, "Touch end: ", touchEndX, "Difference: ", touchStartX - touchEndX);
+    if (touchStartX - touchEndX > 50) { // Swipe left gesture detected
+      console.log(`Show search panel before: ${true}`);
+      setShowSearchPanel(false); // Close search panel
+      console.log("Search panel closed by swipe")
+    }
+  };
+
+  useEffect(() => {
+    // Add event listeners for touch events
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [touchStartX, touchEndX]);
     
     return (
-        <div className={`flex flex-col fixed left-0 z-20 h-full w-[16rem] bg-white shadow-xl pt-4 space-y-4 p-1`}> {/* Search panel */}
+        <div className={`flex flex-col fixed left-0 z-20 h-full w-[16rem] bg-white shadow-xl pt-4 space-y-4 p-1`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        > {/* Search panel */}
         
         <input type="text" placeholder='Search...' value={searchBoxText} onChange={onTextSearchChange} className='def-border p-3 placeholder-color'/> {/* Text filter */}
         

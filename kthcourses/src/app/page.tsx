@@ -172,6 +172,7 @@ export default function Page() {
           onTogglePeriod={onTogglePeriod}
           toggledPeriods={toggledPeriods}
           searchBoxText={searchBoxText}
+          setShowSearchPanel={setShowSearchPanel}
         />
       </div>
 
@@ -180,6 +181,7 @@ export default function Page() {
           className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 transition"
           onClick={() => {
             setShowSearchPanel(true);
+            console.log('Search panel opened');
           }}
         >
           🔍
@@ -189,6 +191,7 @@ export default function Page() {
           className="md:hidden text-2xl pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 transition"
           onClick={() => {
             setShowSearchPanel(false);
+            console.log('Search panel closed');
           }}
         >
           x
