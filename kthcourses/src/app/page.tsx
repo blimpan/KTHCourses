@@ -3,7 +3,7 @@
 import CourseCard from '@/app/components/CourseCard'
 import SearchPanel from '@/app/components/SearchPanel'
 import LoadingGif from '@/app/components/LoadingGif'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 export default function Page() {
 
@@ -21,54 +21,86 @@ export default function Page() {
   const [searchBoxText, setSearchBoxText] = useState<string>('');
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
+  const fetchIdRef = useRef<number>(0);
+
   const persistData = {searchText: searchText, toggledPeriods: toggledPeriods};
   let debounceTimeout: NodeJS.Timeout;
+  let scrollDebounceTimeout: NodeJS.Timeout;
 
   // DECLARED FUNCTIONS
 
   async function fetchCourses() {
+    // console.log(`Starting fetchCourses with searchText ${searchText}`);
 
+    // if (isFetching) return; // Prevent concurrent fetches
     setIsFetching(true);
 
-    console.log(`Starting fetchCourses with searchText: ${searchText}, pageIndex: ${pageIndex}`);
+    // Generate a unique ID for this fetch operation
+    const currentFetchId = fetchIdRef.current + 1;
+    fetchIdRef.current = currentFetchId;
 
     if (maxPageIndex > 0 && pageIndex > maxPageIndex) {
       console.log('Max page index reached');
+      setIsFetching(false);
       return;
     }
 
     if (loadedPages.includes(pageIndex)) {
       console.log(`Page ${pageIndex} already loaded`);
+      setIsFetching(false);
       return;
     }
 
-    const res = await fetch("/api/filter-courses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
-      body: JSON.stringify({
-        textSearch: searchText,
-        periods: toggledPeriods,
-        limit_count: 20,
-        page_index: pageIndex
-      }),
-    });
+    // console.log(`Fetching with searchText ${searchText}`);
+    try {
+      const res = await fetch("/api/filter-courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({
+          textSearch: searchText,
+          periods: toggledPeriods,
+          limit_count: 20,
+          page_index: pageIndex
+        }),
+      });
 
-    setLoadedPages((prevPages) => [...prevPages, pageIndex]);
+      // Check if this is still the latest fetch
+      if (currentFetchId !== fetchIdRef.current) {
+        // console.log(`Ignoring outdated fetch response with ID ${currentFetchId} and searchText ${searchText}`);
+        setIsFetching(false);
+        return;
+      }
 
-    const data = await res.json();
-    
-    setCourses((prevCourses) => [...prevCourses, ...data.courses]);
-    setTotalCourses(data.count);
-    setMaxPageIndex(data.maxPageIndex);
+      const data = await res.json();
+      
+      // For page 1, replace courses; for other pages, append
+      if (pageIndex === 1) {
+        setCourses(data.courses);
+      } else {
+        setCourses(prevCourses => {
+          // Create a Set of existing course IDs to avoid duplicates
+          const existingIds = new Set(prevCourses.map(course => course.id));
+          // Only add courses that don't already exist in the state
+          const newCourses = data.courses.filter((course: { id: number }) => !existingIds.has(course.id));
+          return [...prevCourses, ...newCourses];
+        });
+      }
+      
+      setLoadedPages(prevPages => [...prevPages, pageIndex]);
+      setTotalCourses(data.count);
+      setMaxPageIndex(data.maxPageIndex);
 
-    console.log(data.courses)
-    // console.log(data.count)
-
-    setIsFetching(false);
+      console.log(data.courses);
+      console.log(`Fetch completed for searchText ${searchText} and ID ${currentFetchId}`);
+      // console.log(data.count);
+    } catch (error) {
+      console.error("(From frontend) Error fetching courses:", error);
+    } finally {
+      setIsFetching(false);
+    }
   }
 
   function onTextSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
-
     setSearchBoxText(event.target.value);
 
     clearTimeout(debounceTimeout);
@@ -76,7 +108,6 @@ export default function Page() {
       setSearchText(event.target.value.trim());
     }, 350);
   }
-
 
   function onTogglePeriod(event: React.MouseEvent<HTMLButtonElement>) {
     const period = event.currentTarget.value;
@@ -86,7 +117,6 @@ export default function Page() {
     } else {
       setToggledPeriods([...toggledPeriods, period]); // Add period to toggledPeriods
     }
-
   }
 
   // EFFECTS
@@ -111,12 +141,14 @@ export default function Page() {
   }, []);
 
   useEffect(() => { // Fetch courses when search text changes or toggled periods change. Resets variables to ensure a fresh fetch can be made.
-
-    if (searchText && !isFetching) {
+    if (searchText) {
+      // Reset pagination variables
       setPageIndex(1);
       setLoadedPages([]);
       setTotalCourses(0);
-      setCourses([]);
+      
+      // setCourses([]);
+      
       setReadyForFetch(true); // Indicate that we should fetch courses after state updates
 
       for (const [key, value] of Object.entries(persistData)) {
@@ -124,11 +156,11 @@ export default function Page() {
         sessionStorage.setItem(key, JSON.stringify(value));
       }
     }
-    
   }, [searchText, toggledPeriods]);
 
   useEffect(() => { // Fetch courses when readyForFetch flag is set to true (makes sure vars such as page index are reset before entering fetchCourses)
     if (readyForFetch) {
+      fetchIdRef.current += 1;
       fetchCourses();
       window.scrollTo(0, 0);
       setReadyForFetch(false);
@@ -136,18 +168,17 @@ export default function Page() {
   }, [readyForFetch]);
 
   useEffect(() => { // Increases the page index when user scrolls close to the bottom of the window. Uses a debounce timeout to prevent multiple increments.
-  
+    
     function handleScroll() {
-
       const scrollPosition = window.scrollY + window.innerHeight;
       const threshold = document.documentElement.scrollHeight - (window.innerHeight * 0.3);
 
-      if (scrollPosition >= threshold) {
-        if (debounceTimeout) {
-          clearTimeout(debounceTimeout);
+      if (scrollPosition >= threshold && !isFetching) {
+        if (scrollDebounceTimeout) {
+          clearTimeout(scrollDebounceTimeout);
         }
   
-        debounceTimeout = setTimeout(() => {
+        scrollDebounceTimeout = setTimeout(() => {
           setPageIndex((prevIndex) => prevIndex + 1);
           console.log('Page index increased');
         }, 100);
@@ -212,13 +243,11 @@ export default function Page() {
         )}
 
         {courses.length == 0 && !isFetching && (
-
           <div className='flex justify-center mt-16'>
             <div className='flex w-fit justify-center bg-white drop-shadow-md rounded-lg p-4 animate-card-fade-in'>
               <p className='text-center'>No courses match the current search parameters. <br/>Tip: Try some other ones.</p>
             </div>
           </div>
-
         )}
 
         {totalCourses > 0 && (
@@ -227,9 +256,7 @@ export default function Page() {
         
         {courses.length > 0 &&  (
           <>
-          
             {courses.map((course) => (
-
                 <CourseCard key={course.id}
                 code={course.course_code}
                 name={course.name}
@@ -237,14 +264,10 @@ export default function Page() {
                 ects={course.ects_credits}
                 searchPanelShowing={showSearchPanel}
                 />
-
             ))}
-            
           </>
         )}
-
       </div>
-      
    </div>
   )
 }
