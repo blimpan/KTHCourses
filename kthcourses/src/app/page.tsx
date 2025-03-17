@@ -145,8 +145,9 @@ export default function Page() {
       // Reset pagination variables
       setPageIndex(1);
       setLoadedPages([]);
-      setTotalCourses(0);
       
+      
+      // setTotalCourses(0);
       // setCourses([]);
       
       setReadyForFetch(true); // Indicate that we should fetch courses after state updates
@@ -245,7 +246,7 @@ export default function Page() {
           </div>
         )}
 
-        {totalCourses > 0 && (
+        {courses.length > 0  && (
           <p>Showing {courses.length} of {totalCourses} courses</p>
         )}
         
