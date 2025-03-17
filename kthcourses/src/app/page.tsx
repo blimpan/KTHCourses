@@ -150,11 +150,6 @@ export default function Page() {
       // setCourses([]);
       
       setReadyForFetch(true); // Indicate that we should fetch courses after state updates
-
-      for (const [key, value] of Object.entries(persistData)) {
-        // console.log("Persisting data: " + key + " " + value);
-        sessionStorage.setItem(key, JSON.stringify(value));
-      }
     }
   }, [searchText, toggledPeriods]);
 
@@ -263,6 +258,7 @@ export default function Page() {
                 description={course.content}
                 ects={course.ects_credits}
                 searchPanelShowing={showSearchPanel}
+                persistData={persistData}
                 />
             ))}
           </>
