@@ -30,7 +30,7 @@ export default function Page() {
 
     setIsFetching(true);
 
-    // console.log(`Starting fetchCourses with loadedPages: ${loadedPages}, pageIndex: ${pageIndex}, toggledPeriods ${toggledPeriods}`);
+    console.log(`Starting fetchCourses with searchText: ${searchText}, pageIndex: ${pageIndex}`);
 
     if (maxPageIndex > 0 && pageIndex > maxPageIndex) {
       console.log('Max page index reached');
@@ -56,6 +56,7 @@ export default function Page() {
     setLoadedPages((prevPages) => [...prevPages, pageIndex]);
 
     const data = await res.json();
+    
     setCourses((prevCourses) => [...prevCourses, ...data.courses]);
     setTotalCourses(data.count);
     setMaxPageIndex(data.maxPageIndex);
@@ -111,12 +112,17 @@ export default function Page() {
 
   useEffect(() => { // Fetch courses when search text changes or toggled periods change. Resets variables to ensure a fresh fetch can be made.
 
-    if (searchText) {
+    if (searchText && !isFetching) {
       setPageIndex(1);
       setLoadedPages([]);
       setTotalCourses(0);
       setCourses([]);
       setReadyForFetch(true); // Indicate that we should fetch courses after state updates
+
+      for (const [key, value] of Object.entries(persistData)) {
+        // console.log("Persisting data: " + key + " " + value);
+        sessionStorage.setItem(key, JSON.stringify(value));
+      }
     }
     
   }, [searchText, toggledPeriods]);
@@ -230,7 +236,6 @@ export default function Page() {
                 description={course.content}
                 ects={course.ects_credits}
                 searchPanelShowing={showSearchPanel}
-                persistData={persistData}
                 />
 
             ))}

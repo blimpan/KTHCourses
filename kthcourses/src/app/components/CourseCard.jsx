@@ -6,12 +6,6 @@ export default function CourseCard(params) {
 
     function onCardClick() {
         if (!params.searchPanelShowing) {
-
-            for (const [key, value] of Object.entries(params.persistData)) {
-                // console.log("Persisting data: " + key + " " + value);
-                sessionStorage.setItem(key, JSON.stringify(value));
-            }
-
             router.push(`/course/${params.code}`);       
         }
     }
