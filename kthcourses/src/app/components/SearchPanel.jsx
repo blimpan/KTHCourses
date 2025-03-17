@@ -20,12 +20,12 @@ export default function SearchPanel(params) {
   };
 
   const handleTouchEnd = () => {
-    console.log("Touch start: ", touchStartX, "Touch end: ", touchEndX, "Difference: ", touchStartX - touchEndX);
+    // console.log("Touch start: ", touchStartX, "Touch end: ", touchEndX, "Difference: ", touchStartX - touchEndX);
 
     if ((50 < touchEndX) && (touchStartX - touchEndX > 50)) { // Checks that supposed swipe is within relevant area and from right to left
       // console.log(`Show search panel before: ${true}`);
       setShowSearchPanel(false); // Close search panel
-      console.log("Search panel closed by swipe")
+      // console.log("Search panel closed by swipe")
     }
   };
 
