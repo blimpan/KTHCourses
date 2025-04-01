@@ -8,6 +8,7 @@ export default function LoadingGif() {
         alt="Loading..."
         width={100}
         height={100}
+        priority={true}
         className="aspect-square w-[100px] md:w-[125px]"
       />
     </div>
