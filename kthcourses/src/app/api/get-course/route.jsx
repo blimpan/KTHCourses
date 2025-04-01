@@ -19,7 +19,7 @@ export async function POST(request) {
         console.log(`courseCode: '${courseCode}'`);
 
         const { data, error } = await supabase
-            .from('courses_main')
+            .from('courses_main_expansion')
             .select('*')
             .eq('course_code', courseCode)
             .limit(1)
