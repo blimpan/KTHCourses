@@ -4,13 +4,15 @@ import CourseCard from '@/app/components/CourseCard'
 import SearchPanel from '@/app/components/SearchPanel'
 import LoadingGif from '@/app/components/LoadingGif'
 import React, { useEffect, useState, useRef } from 'react'
+import { Course } from '@/app/types'
+
 
 export default function Page() {
 
   // VARIABLES
   
   const [searchText, setSearchText] = useState('');
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [totalCourses, setTotalCourses] = useState<number>(0);
   const [toggledPeriods, setToggledPeriods] = useState<string[]>([]);
   const [pageIndex, setPageIndex] = useState<number>(1);
@@ -72,16 +74,17 @@ export default function Page() {
       }
 
       const data = await res.json();
+      const coursesArr: Course[] = data.courses;
       
       // For page 1, replace courses; for other pages, append
       if (pageIndex === 1) {
-        setCourses(data.courses);
+        setCourses(coursesArr);
       } else {
         setCourses(prevCourses => {
           // Create a Set of existing course IDs to avoid duplicates
           const existingIds = new Set(prevCourses.map(course => course.id));
           // Only add courses that don't already exist in the state
-          const newCourses = data.courses.filter((course: { id: number }) => !existingIds.has(course.id));
+          const newCourses = coursesArr.filter((course) => !existingIds.has(course.id));
           return [...prevCourses, ...newCourses];
         });
       }
@@ -90,7 +93,7 @@ export default function Page() {
       setTotalCourses(data.count);
       setMaxPageIndex(data.maxPageIndex);
 
-      console.log(data.courses);
+      console.log(coursesArr);
       console.log(`Fetch completed for searchText ${searchText} and ID ${currentFetchId}`);
       // console.log(data.count);
     } catch (error) {
@@ -252,12 +255,9 @@ export default function Page() {
         
         {courses.length > 0 &&  (
           <>
-            {courses.map((course) => (
-                <CourseCard key={course.id}
-                code={course.course_code}
-                name={course.name}
-                description={course.content}
-                ects={course.ects_credits}
+            {courses.map((courseObj:Course) => (
+                <CourseCard key={courseObj.id}
+                course={courseObj}
                 searchPanelShowing={showSearchPanel}
                 persistData={persistData}
                 />

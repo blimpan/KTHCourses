@@ -16,9 +16,13 @@ RETURNS TABLE (
     start_periods text,
     goals text,
     content text,
+    ai_summary text,  -- Added ai_summary to the return type
     total_count bigint
 ) AS $$
 BEGIN
+
+    SET search_path TO public;
+
     -- Declare variable for the parsed search term
     DECLARE 
         ts_query tsquery;
@@ -40,8 +44,9 @@ BEGIN
                 cm.start_periods, 
                 cm.goals, 
                 cm.content,
+                cm.ai_summary,  -- Include ai_summary from the new table
                 cm.full_text  -- Ensure full_text is included
-            FROM courses_main cm
+            FROM courses_main_expansion cm  -- Changed table name
             JOIN course_title ct ON cm.course_code = ct.course_code
             JOIN course_starts cs ON cm.course_code = cs.course_code
             WHERE 
@@ -58,6 +63,7 @@ BEGIN
             fc.id, fc.course_code, fc.name, fc.ects_credits, 
             fc.edu_level, fc.subject, fc.examiners, fc.school, 
             fc.start_periods, fc.goals, fc.content,
+            fc.ai_summary,  -- Include ai_summary in the result set
             COUNT(*) OVER() AS total_count
         FROM filtered_courses fc
         ORDER BY ts_rank(fc.full_text, ts_query) DESC,  -- Rank by relevance of full-text search

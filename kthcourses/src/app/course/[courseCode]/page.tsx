@@ -13,6 +13,7 @@ interface CourseDetails {
     goals: string;
     school: string;
     name: string;
+    ai_summmary: string;
     [key: string]: any;
 }
 
@@ -82,6 +83,11 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                             {courseDetails.ects_credits} ECTS • School: {courseDetails.school} • {courseDetails.edu_level}  • <a className="underline" target='_blank' href={`https://www.kth.se/student/kurser/kurs/${courseDetails.course_code}?l=en`}> Link to official page </a>
                         </p>
                     </div>
+                </div>
+
+                <div className="flex flex-col"> {/* AI Summary */}
+                    <h2 className="text-lg font-semibold">AI Summary</h2>
+                    <p>{courseDetails.ai_summary}</p>
                 </div>
 
                 <div className=""> {/* Course Content */}

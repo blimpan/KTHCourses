@@ -1,9 +1,14 @@
+
+
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 
 export async function POST(request) {
     try {
+        const startTotal = performance.now();
+
+
         const body = await request.json(); // Parse JSON body
         let { limit_count, page_index } = body;
         const { textSearch, periods } = body;
@@ -30,6 +35,8 @@ export async function POST(request) {
         console.log(`text: '${textSearch}'   periods: '${periods}'`);
         console.log(`limit_count: ${limit_count}    page_index: ${page_index} \n`);
 
+        const startDB = performance.now(); // Start timing DB call
+
         const { data, error } = await supabase
         .rpc('search_courses', { 
             search_term: textSearch, 
@@ -38,6 +45,9 @@ export async function POST(request) {
             pagination_offset: pagOffset
         });
 
+        const endDB = performance.now(); // End timing DB call
+        console.log(`🟢 Database query time: ${(endDB - startDB).toFixed(2)}ms`);
+
         if (error) {
             console.error('Error from Supabase:', error); // Debugging
             return new Response('Error fetching courses', { status: 500 });
@@ -45,6 +55,8 @@ export async function POST(request) {
             // console.log('Courses fetched:', data); // Debugging
     
         }
+
+        const startProcessing = performance.now();
 
         // Flatten the response by merging attributes of course_main into the course_title objects
         const flattenedCourses = data.map((course) => ({
@@ -60,6 +72,14 @@ export async function POST(request) {
 
         const maxPageIndex = Math.ceil(totalCount / limit_count);
         console.log(`MaxPageIndex: ${maxPageIndex}`);
+
+        const endProcessing = performance.now(); // End response processing time
+        console.log(`🟡 Response processing time: ${(endProcessing - startProcessing).toFixed(2)}ms`);
+
+        const endTotal = performance.now(); // End total request timing
+        console.log(`🔵 Total API execution time: ${(endTotal - startTotal).toFixed(2)}ms`);
+
+
         return Response.json({courses: flattenedCourses, count: totalCount, maxPageIndex: maxPageIndex});
         
     } catch (error) {
