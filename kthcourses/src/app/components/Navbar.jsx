@@ -7,8 +7,9 @@ export default function Navbar() {
 
         <h1> <Link href="/" className="font-bold">
               KTH Courses
-            </Link> </h1>
-        <ul className="flex space-x-6">
+        </Link> </h1>
+        {false && ( // TODO: remove this after redesigning the navbar
+          <ul className="flex space-x-6">
           <li>
             <Link href="/" className="text-gray-700 hover:text-black">
               Search
@@ -20,6 +21,7 @@ export default function Navbar() {
             </Link>
           </li>
         </ul>
+        )}
       </div>
     </nav>
   );
