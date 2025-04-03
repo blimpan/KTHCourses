@@ -35,7 +35,9 @@ export default function CourseCard( { course, searchPanelShowing, persistData }:
             </div>
 
             {course.ai_summary && (
-                <p className="text-sm overflow-hidden whitespace-nowrap text-ellipsis">{course.ai_summary}</p>
+                <div className='h-10'>
+                    <p className="text-sm line-clamp-2">{course.ai_summary}</p>
+                </div>
             )}
             
         </div>
