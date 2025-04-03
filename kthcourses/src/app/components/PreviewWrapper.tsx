@@ -19,7 +19,7 @@ export default function PreviewWrapper({ children, previewLength = 250 }: Readon
   // Function to truncate at the nearest space
   const truncateAtSpace = (str: string, length: number) => {
     if (str.length <= length) return str; // No truncation needed
-    let cutoff = str.lastIndexOf(" ", length); // Find nearest space before `length`
+    const cutoff = str.lastIndexOf(" ", length); // Find nearest space before `length`
     return cutoff === -1 ? str.slice(0, length) : str.slice(0, cutoff) + "...";
   };
 
