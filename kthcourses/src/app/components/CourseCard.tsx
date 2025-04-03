@@ -28,7 +28,7 @@ export default function CourseCard( { course, searchPanelShowing, persistData }:
 
     return (
         <div onClick={onCardClick} className={`flex flex-col w-full h-min bg-white drop-shadow-md transform transition-transform duration-200 hover:scale-[1.01] rounded-lg p-4 animate-card-fade-in ${!searchPanelShowing ? 'cursor-pointer' : ''}`}>
-            <p className="text-lg font-minibold">{course.course_code + " " + course.name}</p>
+            <p className="text-lg font-normal">{course.course_code + " " + course.name}</p>
             
             <div className="flex flex-row justify-between text-sm">
                 <p>{course.ects_credits} ECTS</p>
