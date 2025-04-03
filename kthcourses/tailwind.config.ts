@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontWeight: {
+        minibold: "550",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
