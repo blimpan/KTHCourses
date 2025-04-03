@@ -35,8 +35,8 @@ export default function CourseCard( { course, searchPanelShowing, persistData }:
             </div>
 
             {course.ai_summary && (
-                <div className='h-10'>
-                    <p className="text-sm line-clamp-2">{course.ai_summary}</p>
+                <div className='h-15'>
+                    <p className="text-sm line-clamp-3">{course.ai_summary}</p>
                 </div>
             )}
             
