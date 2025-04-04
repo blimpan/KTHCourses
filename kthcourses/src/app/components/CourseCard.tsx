@@ -31,7 +31,7 @@ export default function CourseCard( { course, searchPanelShowing, persistData }:
             <p className="text-lg font-normal">{course.course_code + " " + course.name}</p>
             
             <div className="flex flex-row justify-between text-sm">
-                <p>{course.ects_credits} ECTS</p>
+                <p>{course.ects_credits} ECTS • {course.edu_level}</p>
             </div>
 
             {course.ai_summary && (
