@@ -60,7 +60,7 @@ export default function SearchPanel(params) {
             key={period}
             value={period}
             onClick={onTogglePeriod}
-            className={`border-l border-t border-b p-2 w-full h-full border-gray-500 hover:bg-gray-300 ${toggledPeriods.includes(period) ? 'bg-gray-300' : ''} ${index === 0 ? 'rounded-l-md' : ''} ${index === array.length - 1 ? 'border-r rounded-r-md' : ''}`}
+            className={`border-l border-t border-b p-2 w-full h-full border-gray-500 md:hover:bg-gray-300 ${toggledPeriods.includes(period) ? 'bg-gray-300' : ''} ${index === 0 ? 'rounded-l-md' : ''} ${index === array.length - 1 ? 'border-r rounded-r-md' : ''}`}
           >
                 <b>{period}</b>
               </button>
