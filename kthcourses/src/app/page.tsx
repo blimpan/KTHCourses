@@ -234,7 +234,7 @@ export default function Page() {
         </button>
       )}
 
-      <div className='md:pl-[17rem] z-0 flex flex-col w-full h-full pt-4 space-y-4 p-4'
+      <div className={`md:pl-[17rem] z-0 flex flex-col w-full h-full pt-4 space-y-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
             onClick={() => setShowSearchPanel(false)}> {/* Course list */}
 
         {courses.length == 0 && isFetching && (
