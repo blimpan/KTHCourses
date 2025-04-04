@@ -75,6 +75,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                     </div>
                 </div>
 
+
                 {courseDetails.ai_summary && (
                     <div className="flex flex-col"> {/* AI Summary */}
                         <h2 className="text-lg font-semibold">AI Summary</h2>
@@ -83,6 +84,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                         </PreviewWrapper>
                     </div>
                 )}
+
 
                 {courseDetails.content && (
                     <div className=""> {/* Course Content */}
