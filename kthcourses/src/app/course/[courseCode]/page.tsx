@@ -3,24 +3,14 @@
 import { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
 import LoadingGif from '@/app/components/LoadingGif'
+import { Course } from '@/app/types';
+import PreviewWrapper from '@/app/components/PreviewWrapper';
 
-interface CourseDetails {
-    content: string;
-    course_code: string;
-    ects_credits: string;
-    edu_level: string;
-    examiners: string;
-    goals: string;
-    school: string;
-    name: string;
-    ai_summmary: string;
-    [key: string]: any;
-}
 
 const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => {
-    const [courseDetails, setCourseDetails] = useState<CourseDetails | null>(null);
+    const [courseDetails, setCourseDetails] = useState<Course | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [courseCode, setCourseCode] = useState<string | null>(null);
+    const [courseCode, setCourseCode] = useState<string>("");
 
     // Extract courseCode from params and store it in state
     useEffect(() => {
@@ -43,7 +33,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                 });
 
                 if (res.ok) {
-                    const { course } = await res.json();
+                    const { course }  = await res.json();
                     setCourseDetails(course);
                     console.log(`Course in frontend`, course);
                 } else {
@@ -68,7 +58,7 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
     }
 
     if (!isLoading && !courseDetails) { // Course not found
-        return <div>Course not found</div>;
+        return <p>Course not found</p>;
     }
 
     if (!isLoading && courseDetails) {
@@ -80,25 +70,35 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                     </h1>
                     <div className="flex flex-row space-x-2">
                         <p className="">
-                            {courseDetails.ects_credits} ECTS • School: {courseDetails.school} • {courseDetails.edu_level}  • <a className="underline" target='_blank' href={`https://www.kth.se/student/kurser/kurs/${courseDetails.course_code}?l=en`}> Link to official page </a>
+                            {courseDetails.ects_credits} ECTS • School: {courseDetails.school} • {courseDetails.edu_level}  • <a className="underline text-nowrap" target='_blank' href={`https://www.kth.se/student/kurser/kurs/${courseDetails.course_code}?l=en`}> Link to official page </a>
                         </p>
                     </div>
                 </div>
 
-                <div className="flex flex-col"> {/* AI Summary */}
-                    <h2 className="text-lg font-semibold">AI Summary</h2>
-                    <p>{courseDetails.ai_summary}</p>
-                </div>
 
-                <div className=""> {/* Course Content */}
-                    <h2 className="text-lg font-semibold">Course Content</h2>
-                    <div className="rich-text" dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(courseDetails.content) }}></div>
-                </div>
+                {courseDetails.ai_summary && (
+                    <div className="flex flex-col"> {/* AI Summary */}
+                        <h2 className="text-lg font-semibold">AI Summary</h2>
+                        <PreviewWrapper>
+                            <p>{courseDetails.ai_summary}</p>
+                        </PreviewWrapper>
+                    </div>
+                )}
 
-                <div className=""> {/* Course Goals */}
-                    <h2 className="text-lg font-semibold">Intended Learning Outcomes</h2>
-                    <div className="rich-text" dangerouslySetInnerHTML={{ __html: courseDetails.goals }}></div>
-                </div>
+
+                {courseDetails.content && (
+                    <div className=""> {/* Course Content */}
+                        <h2 className="text-lg font-semibold">Course Content</h2>
+                        <div className="rich-text" dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(courseDetails.content) }}></div>
+                    </div>
+                )}
+
+                {courseDetails.goals && (
+                    <div className=""> {/* Course Goals */}
+                        <h2 className="text-lg font-semibold">Intended Learning Outcomes</h2>
+                        <div className="rich-text" dangerouslySetInnerHTML={{ __html: courseDetails.goals }}></div>
+                    </div>
+                )}
 
                 <div className=""> {/* Examiners */}
                     <h2 className="text-lg font-semibold">Examiners</h2>
