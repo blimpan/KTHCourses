@@ -8,12 +8,20 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        "xs": "450px", 
+      },
+      fontFamily: {
+        sans: ['Inter', 'Arial', 'Helvetica', 'sans-serif'],
+      },
       blur: {
         xs: '2px',
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "kth-blue": "var(--kth-blue)",
+        "kth-gray": "var(--kth-gray)",
       },
       keyframes: {
         fadeIn: {

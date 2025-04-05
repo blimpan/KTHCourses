@@ -3,6 +3,7 @@
 import CourseCard from '@/app/components/CourseCard'
 import SearchPanel from '@/app/components/SearchPanel'
 import LoadingGif from '@/app/components/LoadingGif'
+import WelcomeCard from '@/app/components/WelcomeCard'
 import React, { useEffect, useState, useRef } from 'react'
 import { Course } from '@/app/types'
 
@@ -22,6 +23,8 @@ export default function Page() {
   const [showSearchPanel, setShowSearchPanel] = useState<boolean>(false);
   const [searchBoxText, setSearchBoxText] = useState<string>('');
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [firstFetchDone, setFirstFetchDone] = useState<boolean>(false);
+
 
   const fetchIdRef = useRef<number>(0);
 
@@ -32,9 +35,9 @@ export default function Page() {
   // DECLARED FUNCTIONS
 
   async function fetchCourses() {
-    // console.log(`Starting fetchCourses with searchText ${searchText}`);
 
-    // if (isFetching) return; // Prevent concurrent fetches
+    if (!firstFetchDone) { setFirstFetchDone(true); }; 
+
     setIsFetching(true);
 
     // Generate a unique ID for this fetch operation
@@ -124,7 +127,8 @@ export default function Page() {
 
   // EFFECTS
 
-  useEffect(() => {
+  useEffect(() => { // Look for persisted data in session storage on load
+    
     // console.log('Checking session storage');
 
     const savedSearchText = sessionStorage.getItem('searchText');
@@ -217,7 +221,6 @@ export default function Page() {
           className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 transition"
           onClick={() => {
             setShowSearchPanel(true);
-            console.log('Search panel opened');
           }}
         >
           🔍
@@ -235,15 +238,22 @@ export default function Page() {
       )}
 
       <div className={`md:pl-[17rem] z-0 flex flex-col w-full h-full pt-4 space-y-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
-            onClick={() => setShowSearchPanel(false)}> {/* Course list */}
+            onClick={() => setShowSearchPanel(false)}> {/* Widgets area */}
+
+        
+        {!firstFetchDone && ( // Show this on first load
+          <div className='max-w-3xl mx-auto w-full flex items-center'>
+            <WelcomeCard />
+          </div>
+        )}
 
         {courses.length == 0 && isFetching && (
           <LoadingGif />
         )}
 
-        {courses.length == 0 && !isFetching && (
+        {courses.length == 0 && !isFetching && firstFetchDone && ( // Show this when no courses are found
           <div className='flex justify-center mt-16'>
-            <div className='flex w-fit justify-center bg-white drop-shadow-md rounded-lg p-4 animate-card-fade-in'>
+            <div className='flex w-fit justify-center bg-white default-comp-style'>
               <p className='text-center'>No courses match the current search parameters. <br/>Tip: Try some other ones.</p>
             </div>
           </div>
