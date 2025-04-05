@@ -15,13 +15,14 @@ export default function WelcomeCard() {
                 </ul>
             </div>
 
-            <div className="relative grow mt-2 overflow-clip rounded-lg h-[10rem] xs:h-[15rem] sm:h-auto">
+            <div className="relative grow mt-2 overflow-hidden rounded-lg h-[10rem] xs:h-[15rem] sm:h-auto">
                 <img 
                     src="/images/kth-ellipse.webp" 
                     alt="KTH Logo"
                     className="absolute bottom-0 right-0 object-contain object-top top-0 h-[13rem] xs:h-[18rem] sm:object-right"
                 />
             </div>
+
         </div>
     );
 };
