@@ -176,7 +176,7 @@ export default function Page() {
       const scrollPosition = window.scrollY + window.innerHeight;
       const threshold = document.documentElement.scrollHeight - (window.innerHeight * 0.3);
 
-      if (scrollPosition >= threshold && !isFetching) {
+      if (scrollPosition >= threshold && !isFetching && firstFetchDone) { // If we dont check firstFetchDone then we might trigger an unnecessary fetch
         if (scrollDebounceTimeout) {
           clearTimeout(scrollDebounceTimeout);
         }
