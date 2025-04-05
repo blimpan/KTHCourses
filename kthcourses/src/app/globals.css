@@ -42,7 +42,7 @@ body {
 }
 
 .default-comp-style {
-  @apply drop-shadow-md rounded-lg p-4 animate-card-fade-in;
+  @apply rounded-lg p-4 shadow-md animate-card-fade-in;
 }
 
 
