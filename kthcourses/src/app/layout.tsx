@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`min-w-80 bg-gray-50 ${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`min-w-80 bg-kth-gray ${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Navbar />
         <main className="mt-14">
           {children}
