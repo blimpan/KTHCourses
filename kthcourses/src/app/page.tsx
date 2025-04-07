@@ -6,6 +6,7 @@ import LoadingGif from '@/app/components/LoadingGif'
 import WelcomeCard from '@/app/components/WelcomeCard'
 import React, { useEffect, useState, useRef } from 'react'
 import { Course } from '@/app/types'
+import StartSearch from './components/StartSearch'
 
 
 export default function Page() {
@@ -36,8 +37,8 @@ export default function Page() {
 
   async function fetchCourses() {
 
-    if (!firstFetchDone) { setFirstFetchDone(true); }; 
-
+    setFirstFetchDone(true);
+  
     setIsFetching(true);
 
     // Generate a unique ID for this fetch operation
@@ -104,6 +105,8 @@ export default function Page() {
     } finally {
       setIsFetching(false);
     }
+
+    console.log(`firstFetchDone is at end of fetch ${firstFetchDone}`);
   }
 
   function onTextSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -125,24 +128,36 @@ export default function Page() {
     }
   }
 
+  function handleScroll() {
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const threshold = document.documentElement.scrollHeight - (window.innerHeight * 0.4);
+
+    if (scrollPosition >= threshold && !isFetching && courses.length > 0) { // If we dont check firstFetchDone then we might trigger an unnecessary fetch
+      if (scrollDebounceTimeout) {
+        clearTimeout(scrollDebounceTimeout);
+      }
+
+      scrollDebounceTimeout = setTimeout(() => {
+        setPageIndex((prevIndex) => prevIndex + 1);
+        console.log('Page index increased');
+      }, 100);
+    }
+  }
+
   // EFFECTS
 
   useEffect(() => { // Look for persisted data in session storage on load
-    
-    // console.log('Checking session storage');
-
+  
     const savedSearchText = sessionStorage.getItem('searchText');
     const savedToggledPeriods = sessionStorage.getItem('toggledPeriods');
       
     if (savedSearchText) {
       setSearchBoxText(savedSearchText.slice(1, -1));
       setSearchText(savedSearchText.slice(1, -1));
-      // console.log('Search text loaded from session storage');
     };
     
     if (savedToggledPeriods) {
       setToggledPeriods(JSON.parse(savedToggledPeriods));
-      // console.log(`Toggled periods loaded from session storage: ${savedToggledPeriods}`);
     };
 
   }, []);
@@ -152,7 +167,6 @@ export default function Page() {
       // Reset pagination variables
       setPageIndex(1);
       setLoadedPages([]);
-      
       
       // setTotalCourses(0);
       // setCourses([]);
@@ -172,28 +186,12 @@ export default function Page() {
 
   useEffect(() => { // Increases the page index when user scrolls close to the bottom of the window. Uses a debounce timeout to prevent multiple increments.
     
-    function handleScroll() {
-      const scrollPosition = window.scrollY + window.innerHeight;
-      const threshold = document.documentElement.scrollHeight - (window.innerHeight * 0.3);
-
-      if (scrollPosition >= threshold && !isFetching && firstFetchDone) { // If we dont check firstFetchDone then we might trigger an unnecessary fetch
-        if (scrollDebounceTimeout) {
-          clearTimeout(scrollDebounceTimeout);
-        }
-  
-        scrollDebounceTimeout = setTimeout(() => {
-          setPageIndex((prevIndex) => prevIndex + 1);
-          console.log('Page index increased');
-        }, 100);
-      }
-    }
-
     window.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [courses]); // Include courses to ensure function handleScroll has access to latest value
   
   
   useEffect(() => {  // Fetch "next page" of courses whenever page index changes
@@ -216,28 +214,33 @@ export default function Page() {
         />
       </div>
 
-      {!showSearchPanel ? (
+      {(!showSearchPanel && firstFetchDone) && (
         <button
-          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 transition"
+          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-gray-300 transition"
           onClick={() => {
             setShowSearchPanel(true);
           }}
         >
-          🔍
-        </button>
-      ) : (
-        <button
-          className="md:hidden text-2xl pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-white shadow-lg rounded-full border border-gray-300 transition"
-          onClick={() => {
-            setShowSearchPanel(false);
-            console.log('Search panel closed');
-          }}
-        >
-          x
+          <img
+            src="/images/magnifier.svg"
+            alt="Magnifier"
+            className="aspect-square h-7"
+          />
         </button>
       )}
+      
+      {(showSearchPanel) && (
+        <button
+        className="md:hidden text-2xl text-white font-semibold pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-gray-300"
+        onClick={() => {
+          setShowSearchPanel(false);
+        }}
+      >
+        x
+      </button>
+      )}
 
-      <div className={`md:pl-[17rem] z-0 flex flex-col w-full h-full pt-4 space-y-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
+      <div className={`md:pl-[17rem] z-0 flex flex-col w-full h-full pt-4 gap-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
             onClick={() => setShowSearchPanel(false)}> {/* Widgets area */}
 
         
@@ -245,6 +248,14 @@ export default function Page() {
           <div className='max-w-3xl mx-auto w-full flex items-center'>
             <WelcomeCard />
           </div>
+
+        )}
+
+        {!firstFetchDone && ( // Show this on first load
+            <div className="md:hidden flex justify-center items-center mt-10">
+            <StartSearch openSidePanel={() => setShowSearchPanel(true)} />
+            </div>
+
         )}
 
         {courses.length == 0 && isFetching && (
