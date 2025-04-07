@@ -20,6 +20,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "kth-dark-blue": "var(--kth-blue)",
         "kth-blue": "var(--kth-blue)",
         "kth-gray": "var(--kth-gray)",
       },
@@ -34,5 +35,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/container-queries'),
+  ],
 } satisfies Config;
