@@ -44,25 +44,25 @@ export default function SearchPanel(params) {
   }, [touchStartX, touchEndX]);
     
     return (
-        <div className={`flex flex-col fixed left-0 z-20 h-full w-[16rem] bg-white shadow-xl pt-4 space-y-4 p-2`}
+        <div className={`flex flex-col fixed left-0 z-20 h-full w-[17rem] bg-white shadow-xl pt-4 space-y-4 p-2`}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         > {/* Search panel */}
         
-        <input type="text" placeholder='Search by keyword or code' value={searchBoxText} onChange={onTextSearchChange} className='def-border p-3 placeholder-color'/> {/* Text filter */}
+        <input type="text" placeholder='Search by keyword or code...' value={searchBoxText} onChange={onTextSearchChange} className='rounded-lg border border-kth-dark-blue p-3 bg-white placeholder:text-gray-500'/> {/* Text filter */}
         
         <div className='flex flex-col'> {/* Period start filter */}
-          <p>Starting in period</p>
-          <div className='flex flex-row w-full justify-around border-gray-500'>
+          <p className="pl-1">Filter by starting period</p>
+          <div className='flex flex-row w-full justify-around border-white'>
           {['1', '2', '3', '4', 'S'].map((period, index, array) => (
           <button
             key={period}
             value={period}
             onClick={onTogglePeriod}
-            className={`border-l border-t border-b p-2 w-full h-full border-gray-500 md:hover:bg-gray-300 ${toggledPeriods.includes(period) ? 'bg-gray-300' : ''} ${index === 0 ? 'rounded-l-md' : ''} ${index === array.length - 1 ? 'border-r rounded-r-md' : ''}`}
+            className={`border-l border-t border-b p-2 w-full h-full bg-kth-dark-blue border-white md:hover:bg-gray-400 ${toggledPeriods.includes(period) ? '!bg-gray-400' : ''} ${index === 0 ? 'rounded-l-md' : ''} ${index === array.length - 1 ? 'border-r rounded-r-md' : ''}`}
           >
-                <b>{period}</b>
+                <p className="font-bold text-white">{period}</p>
               </button>
             ))}
           </div>
