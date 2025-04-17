@@ -204,7 +204,7 @@ export default function Page() {
   return (
    <div className='flex h-full w-full'>
 
-      <div className={`fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[110%]'}`}>
+      <div className={`fixed left-0 z-20 h-full w-min min-w-[15rem] bg-white shadow-xl transform transition-transform duration-300 ease-in-out md:translate-x-0 ${showSearchPanel ? 'translate-x-0' : '-translate-x-[115%]'}`}>
         <SearchPanel
           onTextSearchChange={onTextSearchChange}
           onTogglePeriod={onTogglePeriod}
@@ -216,7 +216,8 @@ export default function Page() {
 
       {(!showSearchPanel && firstFetchDone) && (
         <button
-          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-gray-300 transition"
+          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-white transition"
+
           onClick={() => {
             setShowSearchPanel(true);
           }}
@@ -231,7 +232,7 @@ export default function Page() {
       
       {(showSearchPanel) && (
         <button
-        className="md:hidden text-2xl text-white font-semibold pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-gray-300"
+        className="md:hidden text-2xl text-white font-semibold pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-white"
         onClick={() => {
           setShowSearchPanel(false);
         }}
@@ -240,8 +241,7 @@ export default function Page() {
       </button>
       )}
 
-
-      <div className={`md:pl-[17rem] z-0 flex flex-col w-full h-full pt-4 gap-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
+      <div className={`md:pl-[18rem] z-0 flex flex-col w-full h-full pt-4 gap-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
 
             onClick={() => setShowSearchPanel(false)}> {/* Widgets area */}
 
@@ -273,7 +273,7 @@ export default function Page() {
         )}
 
         {courses.length > 0  && (
-          <p>Showing {courses.length} of {totalCourses} courses</p>
+          <p className='w-fit py-2 px-3 border rounded-lg bg-white'>Showing {courses.length} of {totalCourses} courses</p>
         )}
         
         {courses.length > 0 &&  (
