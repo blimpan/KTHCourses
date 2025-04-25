@@ -217,6 +217,7 @@ export default function Page() {
       {(!showSearchPanel && firstFetchDone) && (
         <button
           className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-white transition"
+
           onClick={() => {
             setShowSearchPanel(true);
           }}
@@ -239,7 +240,6 @@ export default function Page() {
         x
       </button>
       )}
-
 
       <div className={`md:pl-[18rem] z-0 flex flex-col w-full h-full pt-4 gap-4 p-4 md:blur-none ${showSearchPanel ? 'blur-xs' : 'blur-none'} `}
 

@@ -30,6 +30,7 @@ export default function CourseCard( { course, searchPanelShowing, persistData }:
 
         <button onClick={onCardClick} className={`flex flex-col w-full h-min bg-white default-comp-style text-left  transform transition-transform duration-200 hover:scale-[1.01]  ${!searchPanelShowing ? 'cursor-pointer' : ''}`}>
 
+
             <p className="text-lg font-medium text-kth-dark-blue">{course.course_code + " " + course.name}</p>
             
             <div className="flex flex-row justify-between text-sm">
