@@ -20,7 +20,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        "kth-dark-blue": "var(--kth-blue)",
+        "kth-dark-blue": "var(--kth-dark-blue)",
         "kth-blue": "var(--kth-blue)",
         "kth-gray": "var(--kth-gray)",
       },

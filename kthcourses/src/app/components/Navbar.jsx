@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav className="min-w-80 h-[56px] fixed top-0 z-50 w-screen bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
 
-        <h1> <Link href="/" className="font-bold text-kth-dark-blue md:text-xl">
+        <h1> <Link href="/" className="font-bold text-kth-blue md:text-xl">
               KTH Courses
         </Link> </h1>
         {false && ( // TODO: remove this after redesigning the navbar
