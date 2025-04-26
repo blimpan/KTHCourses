@@ -84,13 +84,13 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
 
     if (!isLoading && courseDetails) {
         return (
-            <div className="flex flex-col flex-grow gap-4 bg-white p-4 animate-card-fade-in">
+            <div className="flex flex-col flex-grow gap-6 bg-white p-4 animate-card-fade-in">
                 
                 <h1 className="text-2xl font-semibold">
                     {courseDetails.course_code} {courseDetails.name}
                 </h1>
 
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row"> {/* Course details */}
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row -mt-2 md:mt-0"> {/* Course details */}
                     
                     <div className='flex flex-col space-y-2 min-w-72 md:w-1/3 '> {/* Contains Credits & School + Starts & Level */}
 
@@ -181,12 +181,12 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                 </div>
 
                 {hasContent ? (
-                    <div className="flex flex-col"> {/* Table of Contents */}
+                    <div className="flex flex-col space-y-1"> {/* Table of Contents */}
                         
                         <h2 className="text-lg font-semibold">Table of Contents</h2>
 
                         <div className="border-l border-black pl-4 ml-1">
-                            <ul className="space-y-2">
+                            <ul className="space-y-4">
                                 {courseDetails.ai_summary && (
                                     <li>
                                         <a href="#ai-overview" className="text-kth-blue">AI Overview</a>
@@ -216,21 +216,21 @@ const CoursePage = ({ params }: { params: Promise<{ courseCode: string }> }) => 
                 {courseDetails.ai_summary && (
                     <div className="flex flex-col" id='ai-overview'> {/* AI Summary */}
                         <h2 className="text-lg font-semibold">AI Overview</h2>
-                            <p>{courseDetails.ai_summary}</p>
+                            <p className='font-light'>{courseDetails.ai_summary}</p>
                     </div>
                 )}
 
                 {courseDetails.content && (
                     <div className="" id='course-content'> {/* Course Content */}
                         <h2 className="text-lg font-semibold">Course Content</h2>
-                        <div className="rich-text" dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(courseDetails.content) }}></div>
+                        <div className="rich-text font-light" dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(courseDetails.content) }}></div>
                     </div>
                 )}
 
                 {courseDetails.goals && (
                     <div className="" id='course-goals'> {/* Course Goals */}
                         <h2 className="text-lg font-semibold">Intended Learning Outcomes</h2>
-                        <div className="rich-text" dangerouslySetInnerHTML={{ __html: courseDetails.goals }}></div>
+                        <div className="rich-text font-light" dangerouslySetInnerHTML={{ __html: courseDetails.goals }}></div>
                     </div>
                 )}
 
