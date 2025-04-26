@@ -216,7 +216,7 @@ export default function Page() {
 
       {(!showSearchPanel && firstFetchDone) && (
         <button
-          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-white transition"
+          className="md:hidden fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-blue shadow-lg rounded-full border border-white transition"
 
           onClick={() => {
             setShowSearchPanel(true);
@@ -232,7 +232,8 @@ export default function Page() {
       
       {(showSearchPanel) && (
         <button
-        className="md:hidden text-2xl text-white font-semibold pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-dark-blue shadow-lg rounded-full border border-white"
+        className="md:hidden text-2xl text-white font-semibold pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-blue shadow-lg rounded-full border border-white"
+
         onClick={() => {
           setShowSearchPanel(false);
         }}
