@@ -233,6 +233,7 @@ export default function Page() {
       {(showSearchPanel) && (
         <button
         className="md:hidden text-2xl text-white font-semibold pb-1 fixed bottom-6 left-6 z-20 flex items-center justify-center w-14 h-14 bg-kth-blue shadow-lg rounded-full border border-white"
+
         onClick={() => {
           setShowSearchPanel(false);
         }}

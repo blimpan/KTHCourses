@@ -51,7 +51,7 @@ export default function SearchPanel(params) {
         > {/* Search panel */}
         
         <input type="text" placeholder='Search by keyword or code...' value={searchBoxText} onChange={onTextSearchChange} className='rounded-lg border border-kth-blue p-3 bg-white placeholder:text-gray-500'/> {/* Text filter */}
-        
+
         <div className='flex flex-col'> {/* Period start filter */}
           <p className="pl-1">Filter by starting period</p>
           <div className='flex flex-row w-full justify-around border-white'>
